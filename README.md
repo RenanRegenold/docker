@@ -1,44 +1,70 @@
-# docker
-Estudo Docker
-Docker Course
+## demo app - developing with Docker
 
--> O que é Docker?
-- Uma forma de empacotar aplicações com todas as dependências e configurações necessárias
-- Artefato portáttil, facilmente compartilhado e movido
-- Faz desenvolvimento e implantação mais eficiente
+This demo app shows a simple user profile app set up using 
+- index.html with pure js and css styles
+- nodejs backend with express module
+- mongodb for data storage
 
--> Repositórios Docker
+All components are docker-based
 
-- Repositórios Privados
+### With Docker
 
-- Repositórios Públicos para Docker (DockerHub)
+#### To start the application
 
--> Desenvolvimento de Aplicação
+Step 1: Create docker network
 
-Antes dos Containers
+    docker network create mongo-network 
 
--> Processo de instalação diferente em cada SO
--> Muitos passos onde alguma coisa poderia dar errado
+Step 2: start mongodb 
 
-Depois dos Containers
+    docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password --name mongodb --net mongo-network mongo    
 
-- Ambiente isolado próprio
-- Empacotado com todas as configurações necessárias
-- Um comando para instalar o app
-- Roda o mesmo app com 2 versões diferentes
+Step 3: start mongo-express
+    
+    docker run -d -p 8081:8081 -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin -e ME_CONFIG_MONGODB_ADMINPASSWORD=password --net mongo-network --name mongo-express -e ME_CONFIG_MONGODB_SERVER=mongodb mongo-express   
 
--> Implantação de Aplicação
+_NOTE: creating docker-network in optional. You can start both containers in a default network. In this case, just emit `--net` flag in `docker run` command_
 
-Antes dos Containers
+Step 4: open mongo-express from browser
 
-- Configuração no servidor necessário
-- Desenvolvimento de guia textual
-- Conflitos de versão de dependência
-- Mal-entendidos
+    http://localhost:8081
 
-Depois dos Containers
+Step 5: create `user-account` _db_ and `users` _collection_ in mongo-express
 
-- Desenvolvimento e Operações trabalham juntos para empacotar a aplicação em um container
-- Sem configurações de ambiente necessárias no servidor - exceto Docker Runtime
+Step 6: Start your nodejs application locally - go to `app` directory of project 
 
--> O que é um container
+    npm install 
+    node server.js
+    
+Step 7: Access you nodejs application UI from browser
+
+    http://localhost:3000
+
+### With Docker Compose
+
+#### To start the application
+
+Step 1: start mongodb and mongo-express
+
+    docker-compose -f docker-compose.yaml up
+    
+_You can access the mongo-express under localhost:8080 from your browser_
+    
+Step 2: in mongo-express UI - create a new database "my-db"
+
+Step 3: in mongo-express UI - create a new collection "users" in the database "my-db"       
+    
+Step 4: start node server 
+
+    npm install
+    node server.js
+    
+Step 5: access the nodejs application from browser 
+
+    http://localhost:3000
+
+#### To build a docker image from the application
+
+    docker build -t my-app:1.0 .       
+    
+The dot "." at the end of the command denotes location of the Dockerfile.
