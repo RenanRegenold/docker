@@ -42,3 +42,8 @@ Depois dos Containers
 - Sem configurações de ambiente necessárias no servidor - exceto Docker Runtime
 
 -> O que é um container
+
+
+-> O que é um Dockerfile?
+
+- Blueprint para construir imagens
